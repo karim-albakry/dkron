@@ -95,6 +95,8 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	// Place fallback routes last
 	jobs.GET("/:job", h.jobGetHandler)
 	jobs.GET("/:job/executions", h.executionsHandler)
+
+	v1.GET("/connectors", h.connectorsHandler)
 }
 
 // MetaMiddleware adds middleware to the gin Context.
@@ -357,4 +359,22 @@ func (h *HTTPTransport) busyHandler(c *gin.Context) {
 	})
 
 	renderJSON(c, http.StatusOK, executions)
+}
+
+func (h *HTTPTransport) connectorsHandler(c *gin.Context) {
+	metadata := c.QueryMap("metadata")
+
+	jobs, err := h.agent.Store.GetJobs(
+		&JobOptions{
+			Metadata: metadata,
+		},
+	)
+	if err != nil {
+		log.WithError(err).Error("api: Unable to get connectors, store not reachable.")
+		return
+	}
+	//Ask all server peers for connections
+	//Range through jobs and assing running based on peers connections
+
+	renderJSON(c, http.StatusOK, jobs)
 }

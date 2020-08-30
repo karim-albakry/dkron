@@ -68,6 +68,7 @@ func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 	dashboard.GET("/jobs", a.dashboardJobsHandler)
 	dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
 	dashboard.GET("/busy", a.dashboardBusyHandler)
+	dashboard.GET("/connectors", a.dashboardConnectorsHandler)
 }
 
 func (a *Agent) dashboardIndexHandler(c *gin.Context) {
@@ -128,6 +129,16 @@ func (a *Agent) dashboardBusyHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "busy", data)
 }
 
+func (a *Agent) dashboardConnectorsHandler(c *gin.Context) {
+	data := struct {
+		Common *commonDashboardData
+	}{
+		Common: newCommonDashboardData(a, a.config.NodeName, "../"),
+	}
+
+	c.HTML(http.StatusOK, "connectors", data)
+}
+
 func mustLoadTemplate(path string) []byte {
 	f, err := templates.Templates.Open(path)
 	if err != nil {
@@ -150,7 +161,7 @@ func CreateMyRender() multitemplate.Render {
 	r := multitemplate.New()
 
 	status := mustLoadTemplate("/status.html.tmpl")
-	dash := mustLoadTemplate("/dashboard.html.tmpl")
+	dash := mustLoadTemplate("/dashboard.gohtml")
 
 	r.AddFromStringsFuncs("index", funcMap(),
 		string(dash),
@@ -171,6 +182,10 @@ func CreateMyRender() multitemplate.Render {
 		string(dash),
 		string(status),
 		string(mustLoadTemplate("/busy.html.tmpl")))
+
+	r.AddFromStringsFuncs("connectors", funcMap(),
+		string(dash),
+		string(mustLoadTemplate("/connectors.gohtml")))
 
 	return r
 }

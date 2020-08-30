@@ -465,3 +465,61 @@ dkron.controller('BusyCtrl', function ($scope, $http, $timeout, $element, $rootS
   };
   busy();
 });
+
+dkron.controller('ConnectorListCtrl', ($scope, $location, $http, $interval, hideDelay, $rootScope) => {
+  $scope.selectedConnectionType = ConnectionType.MONGO
+
+  $scope.getSelectedConnection = connectionType => {
+    switch (connectionType){
+      case "mongo":
+        $scope.selectedConnectionType = ConnectionType.MONGO
+        break;
+      case "kafka":
+        $scope.selectedConnectionType = ConnectionType.KAFKA
+        break;
+      case "nats":
+        $scope.selectedConnectionType = ConnectionType.NATS
+        break;
+    }
+  }
+
+  $scope.getSelectedNatsConnection = natsConnectionType => {
+    switch (natsConnectionType){
+      case "default":
+        $scope.selectedNatsConnectionType = NatsConnectionType.USER_AND_PASSWORD
+        break;
+      case "token":
+        $scope.selectedNatsConnectionType = NatsConnectionType.TOKEN
+        break;
+    }
+  }
+
+  let isMongoAuthentication;
+  $scope.setMongoAuthentication = () => {
+    isMongoAuthentication = $scope.mongo_authentication;
+  }
+
+  $scope.createConnection = ()=>{
+    const connectionType = $scope.selectedConnectionType;
+    switch (connectionType){
+      case  ConnectionType.MONGO:
+        const host = $scope.mongo_host;
+        const port = $scope.mongo_port;
+        console.log("host ====>", host);
+        console.log("port ====>", port);
+        console.log("Authentication ====>", isMongoAuthentication);
+        break;
+    }
+    updateView();
+  }
+
+  $scope.close = ()=>{
+    updateView();
+  }
+
+  const updateView = function () {
+    $scope.mongo_host = "";
+    $scope.mongo_port = ""
+    $scope.mongo_authentication = false;
+  }
+});
