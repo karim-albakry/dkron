@@ -1,5 +1,17 @@
 var dkron = angular.module('dkron', ['angular-rickshaw', 'ui.codemirror']);
 
+const ConnectionType = {
+  MONGO: 'MongoDB',
+  KAFKA: 'Apache Kafka',
+  NATS: 'Nats',
+}
+
+const NatsAuthenticationType = {
+  NONE: 'no authentication',
+  USER_AND_PASSWORD: 'Username & Password',
+  TOKEN: 'Token'
+}
+
 dkron.filter('statusClass', function () {
   var friendlyStatusFilter = function (job) {
     if (job.disabled) {
@@ -483,13 +495,13 @@ dkron.controller('ConnectorListCtrl', ($scope, $location, $http, $interval, hide
     }
   }
 
-  $scope.getSelectedNatsConnection = natsConnectionType => {
+  $scope.setNatsAuthenticationType = natsConnectionType => {
     switch (natsConnectionType){
-      case "default":
-        $scope.selectedNatsConnectionType = NatsConnectionType.USER_AND_PASSWORD
+      case "userNameAndPassword":
+        $scope.selectedNatsAuthenticationType = NatsAuthenticationType.USER_AND_PASSWORD
         break;
       case "token":
-        $scope.selectedNatsConnectionType = NatsConnectionType.TOKEN
+        $scope.selectedNatsAuthenticationType = NatsAuthenticationType.TOKEN
         break;
     }
   }

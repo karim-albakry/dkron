@@ -1,255 +1,245 @@
 {{define "content"}}
-    <div class="container content" ng-controller="ConnectorListCtrl">
-        <div class="row">
-            <h2>Connections</h2>
-            <form>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
-                        <input id="filter" type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
-                        <div class="input-group-addon">
-                            <a href="#" data-toggle="modal" data-target="#connectionTemplateModal" title="New"><i
-                                        class="glyphicon glyphicon-plus" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Connection</th>
-                    <th>Type</th>
-                </tr>
-                </thead>
-                <tfoot>
-                <td colspan="7">
-                    <div class="pull-right">
-                        <ul class="pagination">
-                            <li>
-                                <a href>First</a>
-                            </li>
-                            <li>
-                                <a href>« Prev</a>
-                            </li>
-                            <li>
-                                <a href>Next »</a>
-                            </li>
-                            <li>
-                                <a href>Last</a>
-                            </li>
-                        </ul>
-                    </div>
-                </td>
-                </tfoot>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        <div class="modal fade" id="connectionTemplateModal" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel" ng-bind="'Create'"></h4>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="recipient-name" class="control-label">Connection Name:</label>
-                                <input type="text" class="form-control" id="recipient-name">
-                            </div>
-                            <div class="form-group">
-                                <label for="recipient-name" class="control-label">Connection Type:</label>
-                                <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
-                                    <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                                        <li role="presentation" class="dropdown">
-                                            <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown"
-                                               aria-controls="myTabDrop1-contents"
-                                               aria-expanded="false">
-                                                <span>Select Connection</span>
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="myTabDrop2"
-                                                id="myTabDrop1-contents">
-                                                <li class=""><a href="#mongoDropdown" role="tab" id="dropdown3-tab"
-                                                                data-toggle="tab" aria-controls="dropdown1"
-                                                                aria-expanded="false"
-                                                                ng-click="getSelectedConnection('mongo')">MongoDB</a>
-                                                </li>
-                                                <li class=""><a href="#kafkaDropdown" role="tab" id="dropdown4-tab"
-                                                                data-toggle="tab" aria-controls="dropdown1"
-                                                                aria-expanded="false"
-                                                                ng-click="getSelectedConnection('kafka')">Apache
-                                                        Kafka</a></li>
-                                                <li class=""><a href="#natsDropdown" role="tab" id="dropdown4-tab"
-                                                                data-toggle="tab" aria-controls="dropdown1"
-                                                                aria-expanded="false"
-                                                                ng-click="getSelectedConnection('nats')">Nats</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                    <div id="myTabContent" class="tab-content">
-                                        <div role="tabpanel" id="mongoDropdown"
-                                             aria-labelledby="mongo-tab" class="tab-pane fade active in">
-                                            <form>
-                                                <div class="form-group"></div>
-                                                <div class="form-group">
-                                                    <br/>
-                                                    <h2>MongoDB</h2>
-                                                </div>
-                                            </form>
-                                            <form class="form-inline">
-                                                    <div class="form-group">
-                                                        <label for="recipient-name" class="control-label">Host:</label>
-                                                        <input type="text" class="form-control" id="recipient-name" ng-model="mongo_host">
-                                                    </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Port:</label>
-                                                    <input type="text" class="form-control" id="recipient-name" value="27017" ng-model="mongo_port">
-                                                </div>
-                                            </form>
-                                            <br/>
-                                            <form>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Enable Authentication:</label>
-                                                    <input type="checkbox" ng-model="mongo_authentication" ng-click="setMongoAuthentication()">
-                                                </div>
-                                            </form>
-                                            <form>
-                                                <fieldset id="authFS" ng-disabled="!mongo_authentication">
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Database:</label>
-                                                    <input type="text" class="form-control" id="recipient-name">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Username:</label>
-                                                    <input type="text" class="form-control" id="recipient-name">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Password:</label>
-                                                    <input type="password" class="form-control" id="recipient-name">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Auth Mechanism:</label>
-                                                    <select class="form-control dropdown">
-                                                        <option>SCRAM-SHA-1</option>
-                                                        <option>SCRAM-SHA-256</option>
-                                                        <option>MONGODB-CR</option>
-                                                        <option>PLAIN</option>
-                                                        <option>GSSAPI</option>
-                                                        <option>MONGODB-X509</option>
-                                                    </select>
-                                                </div>
-                                                </fieldset>
-                                            </form>
-                                        </div>
-                                        <div role="tabpanel" id="kafkaDropdown"
-                                             aria-labelledby="kafka-tab" class="tab-pane fade">
-                                            <form>
-                                                <div class="form-group"></div>
-                                                <div class="form-group">
-                                                    <br/>
-                                                    <h2>Apache Kafka</h2>
-                                                </div>
-                                                <div class="form-group">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Host:</label>
-                                                    <input type="text" class="form-control" id="recipient-name" ng-model="kafka_hosts">
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div role="tabpanel" id="natsDropdown"
-                                             aria-labelledby="nats-tab" class="tab-pane fade">
-                                            <form>
-                                                <div class="form-group"></div>
-                                                <div class="form-group">
-                                                    <h2>Nats</h2>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Hosts:</label>
-                                                    <input type="text" class="form-control" id="recipient-name" ng-model="nats_hosts">
-                                                </div>
-                                            </form>
-                                            <form>
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="control-label">Connection
-                                                        Type:</label>
-                                                    <div class="bs-example bs-example-tabs"
-                                                         data-example-id="togglable-tabs">
-                                                        <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                                                            <li role="presentation" class="dropdown">
-                                                                <a href="#" id="myTabDrop2" class="dropdown-toggle"
-                                                                   data-toggle="dropdown"
-                                                                   aria-controls="myTabDrop1-contents"
-                                                                   aria-expanded="false">
-                                                                    <span>Select Connection</span>
-                                                                    <span class="caret"></span>
-                                                                </a>
-                                                                <ul class="dropdown-menu" aria-labelledby="myTabDrop2"
-                                                                    id="myTabDrop1-contents">
-                                                                    <li class="">
-                                                                        <a href="#natsDefaultConnection" role="tab"
-                                                                           id="dropdown3-tab" data-toggle="tab"
-                                                                           aria-controls="dropdown1"
-                                                                           aria-expanded="false"
-                                                                           ng-click="getSelectedNatsConnection('default')">
-                                                                            Username & Password
-                                                                        </a>
-                                                                    </li>
-                                                                    <li class="">
-                                                                        <a href="#natsTokenConnection" role="tab"
-                                                                           id="dropdown4-tab"
-                                                                           data-toggle="tab"
-                                                                           aria-controls="dropdown2"
-                                                                           aria-expanded="false"
-                                                                           ng-click="getSelectedNatsConnection('token')">
-                                                                            Token
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </li>
-                                                        </ul>
-                                                        <div id="myTabContent" class="tab-content">
-                                                            <div role="tabpanel"
-                                                                 id="natsDefaultConnection"
-                                                                 aria-labelledby="dropdown3-tab"
-                                                                 class="tab-pane fade"
-                                                                 ng-class="nats_default_connection_TabPanelCssClasses">
-                                                                <form>
-                                                                    <div class="form-group">
-                                                                        <h3>Username & Password</h3>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                            <div role="tabpanel"
-                                                                 id="natsTokenConnection"
-                                                                 aria-labelledby="dropdown4-tab"
-                                                                 class="tab-pane fade"
-                                                                 ng-class="nats_token_connection_TabPanelCssClasses">
-                                                                <div class="form-group">
-                                                                    <h3>Token</h3>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" ng-click="close()">Close</button>
-                        <button class="btn btn-default" value="Create" data-dismiss="modal" ng-click="createConnection()">
-                            Create
-                        </button>
-                    </div>
-                </div>
+  <div class="container content" ng-controller="ConnectorListCtrl">
+    <div class="row">
+      <h2>Connections</h2>
+      <form>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
+            <input id="filter" type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
+            <div class="input-group-addon">
+              <a href="#" data-toggle="modal" data-target="#connectionTemplateModal" title="New"><i
+                        class="glyphicon glyphicon-plus" aria-hidden="true"></i></a>
             </div>
+          </div>
         </div>
+      </form>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Connection</th>
+          <th>Type</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <td colspan="7">
+          <div class="pull-right">
+            <ul class="pagination">
+              <li>
+                <a href>First</a>
+              </li>
+              <li>
+                <a href>« Prev</a>
+              </li>
+              <li>
+                <a href>Next »</a>
+              </li>
+              <li>
+                <a href>Last</a>
+              </li>
+            </ul>
+          </div>
+        </td>
+        </tfoot>
+        <tbody>
+        </tbody>
+      </table>
     </div>
+    <div class="modal fade" id="connectionTemplateModal" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                      aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel" ng-bind="'Create'"></h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="recipient-name" class="control-label">Connection Name:</label>
+                <input type="text" class="form-control" id="recipient-name">
+              </div>
+              <div class="form-group">
+                <label for="recipient-name" class="control-label">Connection Type:</label>
+                <h3><span class="label label-primary" data-ng-bind="selectedConnectionType"></span></h3>
+              </div>
+              <div class="form-group">
+                <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
+                  <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="dropdown">
+                      <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown"
+                         aria-controls="myTabDrop1-contents"
+                         aria-expanded="false">
+                        <span>Select Connection</span>
+                        <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="myTabDrop2"
+                          id="myTabDrop1-contents">
+                        <li class=""><a href="#mongoDropdown" role="tab" id="dropdown3-tab"
+                                        data-toggle="tab" aria-controls="dropdown1"
+                                        aria-expanded="false"
+                                        ng-click="getSelectedConnection('mongo')">MongoDB</a>
+                        </li>
+                        <li class=""><a href="#kafkaDropdown" role="tab" id="dropdown4-tab"
+                                        data-toggle="tab" aria-controls="dropdown1"
+                                        aria-expanded="false"
+                                        ng-click="getSelectedConnection('kafka')">Apache
+                            Kafka</a></li>
+                        <li class=""><a href="#natsDropdown" role="tab" id="dropdown4-tab"
+                                        data-toggle="tab" aria-controls="dropdown1"
+                                        aria-expanded="false"
+                                        ng-click="getSelectedConnection('nats')">Nats</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div id="myTabContent" class="tab-content">
+                    <div role="tabpanel" id="mongoDropdown"
+                         aria-labelledby="mongo-tab" class="tab-pane fade active in">
+                      <form class="form-inline">
+                        <div class="form-group"></div>
+                        <div class="form-group">
+                          <label for="recipient-name" class="control-label">Host:</label>
+                          <input type="text" class="form-control" id="recipient-name" ng-model="mongo_host">
+                        </div>
+                        <div class="form-group">
+                          <label for="recipient-name" class="control-label">Port:</label>
+                          <input type="text" class="form-control" id="recipient-name" value="27017"
+                                 ng-model="mongo_port">
+                        </div>
+                      </form>
+                      <br/>
+                      <form>
+                        <div class="form-group">
+                          <label for="recipient-name" class="control-label">Enable Authentication:</label>
+                          <input type="checkbox" ng-model="mongo_authentication" ng-click="setMongoAuthentication()">
+                        </div>
+                      </form>
+                      <form>
+                        <fieldset id="authFS" ng-disabled="!mongo_authentication">
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Database:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Username:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Password:</label>
+                            <input type="password" class="form-control" id="recipient-name">
+                          </div>
+                          <div class="form-group">
+                            <label for="recipient-name" class="control-label">Auth Mechanism:</label>
+                            <select class="form-control dropdown">
+                              <option>SCRAM-SHA-1</option>
+                              <option>SCRAM-SHA-256</option>
+                              <option>MONGODB-CR</option>
+                              <option>PLAIN</option>
+                              <option>GSSAPI</option>
+                              <option>MONGODB-X509</option>
+                            </select>
+                          </div>
+                        </fieldset>
+                      </form>
+                    </div>
+                    <div role="tabpanel" id="kafkaDropdown"
+                         aria-labelledby="kafka-tab" class="tab-pane fade">
+                      <form>
+                        <div class="form-group"></div>
+                        <div class="form-group">
+                          <label for="recipient-name" class="control-label">Host:</label>
+                          <input type="text" class="form-control" id="recipient-name" ng-model="kafka_hosts">
+                        </div>
+                      </form>
+                    </div>
+                    <div role="tabpanel" id="natsDropdown"
+                         aria-labelledby="nats-tab" class="tab-pane fade">
+                      <form>
+                        <div class="form-group"></div>
+                        <div class="form-group">
+                          <label for="recipient-name" class="control-label">Hosts:</label>
+                          <input type="text" class="form-control" id="recipient-name" ng-model="nats_hosts">
+                        </div>
+                      </form>
+                      <form>
+                        <div class="form-group">
+                          <label for="recipient-name" class="control-label">Connection
+                            Type:</label>
+                          <div class="bs-example bs-example-tabs"
+                               data-example-id="togglable-tabs">
+                            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                              <li role="presentation" class="dropdown">
+                                <a href="#" id="myTabDrop2" class="dropdown-toggle"
+                                   data-toggle="dropdown"
+                                   aria-controls="myTabDrop1-contents"
+                                   aria-expanded="false">
+                                  <span>Select Connection</span>
+                                  <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="myTabDrop2"
+                                    id="myTabDrop1-contents">
+                                  <li class="">
+                                    <a href="#natsDefaultConnection" role="tab"
+                                       id="dropdown3-tab" data-toggle="tab"
+                                       aria-controls="dropdown1"
+                                       aria-expanded="false"
+                                       ng-click="setNatsAuthenticationType('userNameAndPassword')">
+                                      Username & Password
+                                    </a>
+                                  </li>
+                                  <li class="">
+                                    <a href="#natsTokenConnection" role="tab"
+                                       id="dropdown4-tab"
+                                       data-toggle="tab"
+                                       aria-controls="dropdown2"
+                                       aria-expanded="false"
+                                       ng-click="setNatsAuthenticationType('token')">
+                                      Token
+                                    </a>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ul>
+                            <div id="myTabContent" class="tab-content">
+                              <div role="tabpanel"
+                                   id="natsDefaultConnection"
+                                   aria-labelledby="dropdown3-tab"
+                                   class="tab-pane fade"
+                                   ng-class="nats_default_connection_TabPanelCssClasses">
+                                <form>
+                                  <div class="form-group">
+                                    <h3>Username & Password</h3>
+                                  </div>
+                                </form>
+                              </div>
+                              <div role="tabpanel"
+                                   id="natsTokenConnection"
+                                   aria-labelledby="dropdown4-tab"
+                                   class="tab-pane fade"
+                                   ng-class="nats_token_connection_TabPanelCssClasses">
+                                <div class="form-group">
+                                  <h3>Token</h3>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" ng-click="close()">Close
+            </button>
+            <button class="btn btn-default" value="Create" data-dismiss="modal" ng-click="createConnection()">
+              Create
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {{end}}
